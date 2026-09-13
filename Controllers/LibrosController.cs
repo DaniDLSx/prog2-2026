@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using BibliotecaApi.Models;
 using BibliotecaApi.Interfaces;
+using BibliotecaApi.DTOs;
 
 namespace BibliotecaApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class LibrosController: ControllerBase
+public class LibrosController : ControllerBase
 {
 
     private readonly iLibroService _libroService;
@@ -22,7 +23,7 @@ public class LibrosController: ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Libro>> GetAll()
     {
-       
+       //return BadRequest(new { mensaje = "Error en la solicitud." });
         return Ok(_libroService.getAll());
     } 
 
@@ -41,7 +42,7 @@ public class LibrosController: ControllerBase
 
     // POST: api/libros
     [HttpPost]
-    public ActionResult<Libro> Create([FromBody] Libro nuevoLibro)
+    public ActionResult<Libro> Create([FromBody] LibroCreateDTO nuevoLibro)
     {
         if (string.IsNullOrWhiteSpace(nuevoLibro.Titulo) || string.IsNullOrWhiteSpace(nuevoLibro.ISBN))
         {
@@ -55,7 +56,7 @@ public class LibrosController: ControllerBase
 
     // PUT: api/libros/{id}
     [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromBody] Libro libroActualizado)
+    public IActionResult Update(int id, [FromBody] LibroUpdateDTO libroActualizado)
     {
         var actualizado = _libroService.Actualizar(id, libroActualizado);
         if (!actualizado)

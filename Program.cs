@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 //builder.Services.AddTransient<iLibroService, LibroService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<iLibroService, LibroFileService>();
+builder.Services.AddScoped<IAutorService, AutorFileService>();
 
 // OpenAPI/Swagger para documentación y pruebas de la API
 builder.Services.AddEndpointsApiExplorer();

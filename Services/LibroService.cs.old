@@ -1,9 +1,10 @@
 using BibliotecaApi.Models;
 using BibliotecaApi.Interfaces;
+using BibliotecaApi.DTOs;
 
 namespace BibliotecaApi.Services;
 
-public class LibroService:iLibroService
+public class LibroService
 {
     private static readonly List<Libro> _libros = new()
     {
@@ -16,20 +17,36 @@ public class LibroService:iLibroService
 
     public Libro? ObtenerPorId(int id) => _libros.FirstOrDefault(l => l.Id == id);
 
-    public Libro Crear(Libro nuevoLibro)
+    public Libro Crear(LibroCreateDTO nuevoLibro)
     {
-        nuevoLibro.Id = _libros.Count > 0 ? _libros.Max(l => l.Id) + 1 : 1;
-        _libros.Add(nuevoLibro);
-        return nuevoLibro;
+        int nuevoId =  _libros.Count > 0 ? _libros.Max(l => l.Id) + 1 : 1;
+        
+        Libro libroCreado = new Libro
+        {
+            Id = nuevoId,
+            Titulo = nuevoLibro.Titulo,
+            Autor = nuevoLibro.Autor,
+            ISBN = nuevoLibro.ISBN,
+            Tema = nuevoLibro.Tema
+        };
+        _libros.Add(libroCreado);
+        return libroCreado;
     }
 
-    public bool Actualizar(int id, Libro libroActualizado)
+    public bool Actualizar(int id, LibroCreateDTO libroActualizado)
     {
         var index = _libros.FindIndex(l => l.Id == id);
         if (index == -1) return false;
 
-        libroActualizado.Id = id; // Mantener el ID original
-        _libros[index] = libroActualizado;
+        Libro libroCreado = new Libro
+        {
+            Id = _libros[index].Id,
+            Titulo = libroActualizado.Titulo,
+            Autor = libroActualizado.Autor,
+            ISBN = libroActualizado.ISBN,
+            Tema = libroActualizado.Tema
+        };
+        _libros[index] = libroCreado;
         return true;
     }
 

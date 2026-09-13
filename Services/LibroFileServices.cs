@@ -1,5 +1,6 @@
 using BibliotecaApi.Models;
 using BibliotecaApi.Interfaces;
+using BibliotecaApi.DTOs;
 
 namespace BibliotecaApi.Services;
 
@@ -13,7 +14,7 @@ public class LibroFileService: iLibroService
         _fileStorageService = fileStorageService;
     }
 
-    public bool Actualizar(int id, Libro libroActualizado)
+    public bool Actualizar(int id, LibroUpdateDTO libroActualizado)
     {
         var libroExistente = ObtenerPorId(id);
         if (libroExistente == null)
@@ -22,7 +23,6 @@ public class LibroFileService: iLibroService
         }else
         {
             libroExistente.Titulo = libroActualizado.Titulo;
-            libroExistente.Autor = libroActualizado.Autor;
             libroExistente.ISBN = libroActualizado.ISBN;
             libroExistente.Tema = libroActualizado.Tema;
 
@@ -39,15 +39,23 @@ public class LibroFileService: iLibroService
         return false;
     }
 
-    public Libro Crear(Libro nuevoLibro)
+    public Libro Crear(LibroCreateDTO nuevoLibro)
     {
         var libros = getAll();
         int nuevoId = libros.Any() ? libros.Max(l => l.Id) + 1 : 1;
-        nuevoLibro.Id = nuevoId;
-        libros.Add(nuevoLibro);
+        
+        Libro libroCreado = new Libro
+        {
+            Id = nuevoId,
+            Titulo = nuevoLibro.Titulo,
+            ISBN = nuevoLibro.ISBN,
+            Tema = nuevoLibro.Tema
+        };
+        
+        libros.Add(libroCreado);
         var librosJson = System.Text.Json.JsonSerializer.Serialize(libros);
         _fileStorageService.Write(_filePath, librosJson);
-        return nuevoLibro;
+        return libroCreado;
     }
 
     public bool Eliminar(int id)
