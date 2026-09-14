@@ -8,12 +8,14 @@ public class LibroFileService: iLibroService
 {
     private readonly IFileStorageService _fileStorageService;
     private readonly string _filePath = "Data/libros.json";
+    private readonly IAutorService _autorService;
 
-    public LibroFileService(IFileStorageService fileStorageService)
+    public LibroFileService(IFileStorageService fileStorageService, IAutorService autorService)
     {
         _fileStorageService = fileStorageService;
+        _autorService = autorService;
     }
-
+   
     public bool Actualizar(int id, LibroUpdateDTO libroActualizado)
     {
         var libroExistente = ObtenerPorId(id);
@@ -49,7 +51,9 @@ public class LibroFileService: iLibroService
             Id = nuevoId,
             Titulo = nuevoLibro.Titulo,
             ISBN = nuevoLibro.ISBN,
-            Tema = nuevoLibro.Tema
+            Tema = nuevoLibro.Tema,
+            Autor = _autorService.ObtenerPorId(nuevoLibro.AutorId),
+            IdAutor = nuevoLibro.AutorId
         };
         
         libros.Add(libroCreado);

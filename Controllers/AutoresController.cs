@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BibliotecaApi.Models;
 using BibliotecaApi.Services;
 using BibliotecaApi.DTOs;
+using BibliotecaApi.Interfaces;
 
 namespace BibliotecaApi.Controllers;
 
@@ -10,10 +11,12 @@ namespace BibliotecaApi.Controllers;
 public class AutoresController : ControllerBase
 {
     private readonly IAutorService _autorService;
+    private readonly iLibroService _libroService;
 
-    public AutoresController(IAutorService autorService)
+    public AutoresController(IAutorService autorService, iLibroService libroService)
     {
         _autorService = autorService;
+        _libroService = libroService;
     }
 
     // GET: api/autores
@@ -22,6 +25,8 @@ public class AutoresController : ControllerBase
     {
         return Ok(_autorService.GetAll());
     }
+
+
 
     // GET: api/autores/{id}
     [HttpGet("{id}")]
@@ -36,6 +41,19 @@ public class AutoresController : ControllerBase
         else { return NotFound("Autor no encontrado"); }
     }
 
+    //Nueva ruto para traer todos los libros de un autor identificado en la ruta
+    [HttpGet("{id}/libros")]
+    public ActionResult<IEnumerable<Libro>> GetLibrosById(int id)
+    {
+        Autor autor = _autorService.ObtenerPorId(id);
+
+        if (autor != null)
+        {
+            return Ok(_libroService.getAll().FindAll(libro => libro.IdAutor == id));
+            //return Ok(autor);
+        }
+        else { return NotFound("Autor no encontrado"); }
+    }
     // POST: api/autores
     [HttpPost]
     public ActionResult<Autor> Create([FromBody] AutorDTO nuevoAutor)

@@ -20,12 +20,38 @@ public class LibrosController : ControllerBase
     
 
     //Get para obtener todos los libros
+    //Agregamos parametro FromQuery para poder filtrar por idAutor y Tema
     [HttpGet]
-    public ActionResult<IEnumerable<Libro>> GetAll()
+    public ActionResult<IEnumerable<Libro>> GetAll([FromQuery] string idautor = "", [FromQuery] string tema = "")
     {
        //return BadRequest(new { mensaje = "Error en la solicitud." });
+        if (idautor != "")
+        {
+                if(tema != "")
+                {
+                    return _libroService.getAll().FindAll(l => l.IdAutor == int.Parse(idautor) && l.Tema.Contains(tema, StringComparison.OrdinalIgnoreCase));
+                }else
+                {
+                    return _libroService.getAll().FindAll(l => l.IdAutor == int.Parse(idautor) );
+                }
+        }
+        else
+        {
+            if(tema != "")
+                    return _libroService.getAll().FindAll(l => l.Tema.Contains(tema, StringComparison.OrdinalIgnoreCase));    
+        }
+        
         return Ok(_libroService.getAll());
     } 
+
+    //Parametro FromQuery que filtra los libros por titulo segun el parametro recibido
+    [HttpGet("buscar")]
+        public ActionResult<IEnumerable<Libro>> Search([FromQuery] string termino)
+    {
+       //return BadRequest(new { mensaje = "Error en la solicitud." });
+        return Ok(_libroService.getAll().FindAll(libro => libro.Titulo.Contains(termino, StringComparison.OrdinalIgnoreCase) ));
+    } 
+
 
     // Get con dato enviado en la ruta para filtrar un solo libro
     [HttpGet("{id}")]
