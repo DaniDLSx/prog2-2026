@@ -1,17 +1,21 @@
 using BibliotecaApi.Services;
 using BibliotecaApi.Interfaces;
+using BibliotecaApi.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<BibliotecaDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("BibliotecaDb")));
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 //Agrego los controladores
 builder.Services.AddControllers();
 
-//builder.Services.AddTransient<iLibroService, LibroService>();
-builder.Services.AddScoped<IFileStorageService, FileStorageService>();
-builder.Services.AddScoped<iLibroService, LibroFileService>();
-builder.Services.AddScoped<IAutorService, AutorFileService>();
+builder.Services.AddScoped<iLibroService, LibroDbService>();
+//builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+//builder.Services.AddScoped<iLibroService, LibroFileService>();
+builder.Services.AddScoped<IAutorService, AutorDbService>();
 
 // OpenAPI/Swagger para documentación y pruebas de la API
 builder.Services.AddEndpointsApiExplorer();

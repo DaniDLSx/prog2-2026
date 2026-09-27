@@ -3,7 +3,7 @@ using BibliotecaApi.Interfaces;
 using BibliotecaApi.Models;
 using BibliotecaApi.DTOs;
 
-public class AutorFileService(IFileStorageService fileStorageService) : IAutorService
+public class AutorFileService(IFileStorageService fileStorageService)
 {
     private readonly IFileStorageService _fileStorageService = fileStorageService;
     private readonly string _filePath = "Data/autores.json";

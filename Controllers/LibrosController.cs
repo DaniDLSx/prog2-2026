@@ -9,7 +9,6 @@ namespace BibliotecaApi.Controllers;
 [Route("api/[controller]")]
 public class LibrosController : ControllerBase
 {
-
     private readonly iLibroService _libroService;
 
     public LibrosController(iLibroService libroService)
@@ -17,87 +16,79 @@ public class LibrosController : ControllerBase
         _libroService = libroService;
     }
 
-    
-
-    //Get para obtener todos los libros
-    //Agregamos parametro FromQuery para poder filtrar por idAutor y Tema
+    // GET: api/libros  (filtros opcionales por autor y tema)
     [HttpGet]
-    public ActionResult<IEnumerable<Libro>> GetAll([FromQuery] string idautor = "", [FromQuery] string tema = "")
+    public async Task<ActionResult<IEnumerable<Libro>>> GetAll([FromQuery] string idautor = "", [FromQuery] string tema = "")
     {
-       //return BadRequest(new { mensaje = "Error en la solicitud." });
+        var libros = await _libroService.getAll();
+
         if (idautor != "")
         {
-                if(tema != "")
-                {
-                    return _libroService.getAll().FindAll(l => l.IdAutor == int.Parse(idautor) && l.Tema.Contains(tema, StringComparison.OrdinalIgnoreCase));
-                }else
-                {
-                    return _libroService.getAll().FindAll(l => l.IdAutor == int.Parse(idautor) );
-                }
+            if (tema != "")
+                return libros.FindAll(l => l.AutorId == int.Parse(idautor) && l.Tema.Contains(tema, StringComparison.OrdinalIgnoreCase));
+            else
+                return libros.FindAll(l => l.AutorId == int.Parse(idautor));
         }
         else
         {
-            if(tema != "")
-                    return _libroService.getAll().FindAll(l => l.Tema.Contains(tema, StringComparison.OrdinalIgnoreCase));    
+            if (tema != "")
+                return libros.FindAll(l => l.Tema.Contains(tema, StringComparison.OrdinalIgnoreCase));
         }
-        
-        return Ok(_libroService.getAll());
-    } 
 
-    //Parametro FromQuery que filtra los libros por titulo segun el parametro recibido
+        return Ok(libros);
+    }
+
+    // GET: api/libros/buscar?termino=...
     [HttpGet("buscar")]
-        public ActionResult<IEnumerable<Libro>> Search([FromQuery] string termino)
+    public async Task<ActionResult<IEnumerable<Libro>>> Search([FromQuery] string termino)
     {
-       //return BadRequest(new { mensaje = "Error en la solicitud." });
-        return Ok(_libroService.getAll().FindAll(libro => libro.Titulo.Contains(termino, StringComparison.OrdinalIgnoreCase) ));
-    } 
+        var libros = await _libroService.getAll();
+        return Ok(libros.FindAll(libro => libro.Titulo.Contains(termino, StringComparison.OrdinalIgnoreCase)));
+    }
 
-
-    // Get con dato enviado en la ruta para filtrar un solo libro
+    // GET: api/libros/{id}
     [HttpGet("{id}")]
-    public  ActionResult<Libro> GetById(int id)
+    public async Task<ActionResult<Libro>> GetById(int id)
     {
-        Libro libro = _libroService.ObtenerPorId(id);
+        Libro? libro = await _libroService.ObtenerPorId(id);
 
-        if(libro != null)
-        {
+        if (libro != null)
             return Ok(libro);
-        }
-        else{ return NotFound("Libro no encontrado");}
+        else
+            return NotFound("Libro no encontrado");
     }
 
     // POST: api/libros
     [HttpPost]
-    public ActionResult<Libro> Create([FromBody] LibroCreateDTO nuevoLibro)
+    public async Task<ActionResult<Libro>> Create([FromBody] LibroCreateDTO nuevoLibro)
     {
         if (string.IsNullOrWhiteSpace(nuevoLibro.Titulo) || string.IsNullOrWhiteSpace(nuevoLibro.ISBN))
         {
             return BadRequest(new { mensaje = "El título y el ISBN son obligatorios." });
         }
 
-        var libroCreado = _libroService.Crear(nuevoLibro);
+        var libroCreado = await _libroService.Crear(nuevoLibro);
         return CreatedAtAction(nameof(GetById), new { id = libroCreado.Id }, libroCreado);
     }
 
-
     // PUT: api/libros/{id}
     [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromBody] LibroUpdateDTO libroActualizado)
+    public async Task<IActionResult> Update(int id, [FromBody] LibroUpdateDTO libroActualizado)
     {
-        var actualizado = _libroService.Actualizar(id, libroActualizado);
+        var actualizado = await _libroService.Actualizar(id, libroActualizado);
         if (!actualizado)
         {
             return NotFound(new { mensaje = $"No se pudo actualizar. Libro con ID {id} no encontrado." });
         }
 
-        return NoContent(); // 204 No Content para actualizaciones exitosas
+        return NoContent();
     }
 
     // DELETE: api/libros/{id}
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var eliminado = _libroService.Eliminar(id);
+        var eliminado = await _libroService.Eliminar(id);
         if (!eliminado)
         {
             return NotFound(new { mensaje = $"No se pudo eliminar. Libro con ID {id} no encontrado." });
@@ -106,4 +97,3 @@ public class LibrosController : ControllerBase
         return NoContent();
     }
 }
-

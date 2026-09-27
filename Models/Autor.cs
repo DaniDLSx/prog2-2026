@@ -12,6 +12,7 @@ public class Autor
         Nombre = nombre;
         Nacionalidad = nacionalidad;
     }
+    public Autor() { } // Constructor vacío para la deserialización
 }
 
 

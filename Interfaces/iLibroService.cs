@@ -5,14 +5,9 @@ namespace BibliotecaApi.Interfaces;
 
 public interface iLibroService
 {
-    
-    public List<Libro> getAll();
-    public Libro? ObtenerPorId(int id);
-
-    public Libro Crear(LibroCreateDTO nuevoLibro);
-
-    public bool Actualizar(int id, LibroUpdateDTO libroActualizado);
-
-    public bool Eliminar(int id);
-    
+    public Task<List<Libro>> getAll();
+    public Task<Libro?> ObtenerPorId(int id);
+    public Task<Libro> Crear(LibroCreateDTO nuevoLibro);
+    public Task<bool> Actualizar(int id, LibroUpdateDTO libroActualizado);
+    public Task<bool> Eliminar(int id);
 }
