@@ -3,11 +3,14 @@ using BibliotecaApi.Models;
 using BibliotecaApi.Services;
 using BibliotecaApi.DTOs;
 using BibliotecaApi.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotecaApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+//Autenticacion y autorizacion de JWT
+[Authorize(Roles = "Usuario")]
 public class AutoresController : ControllerBase
 {
     private readonly IAutorService _autorService;

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BibliotecaApi.Models;
 using BibliotecaApi.Interfaces;
 using BibliotecaApi.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotecaApi.Controllers;
 
@@ -18,6 +19,8 @@ public class LibrosController : ControllerBase
 
     // GET: api/libros  (filtros opcionales por autor y tema)
     [HttpGet]
+    // Autenticacion de JWT
+    [Authorize]
     public async Task<ActionResult<IEnumerable<Libro>>> GetAll([FromQuery] string idautor = "", [FromQuery] string tema = "")
     {
         var libros = await _libroService.getAll();

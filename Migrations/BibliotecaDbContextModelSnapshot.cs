@@ -63,6 +63,29 @@ namespace BibliotecaApi.Migrations
                     b.ToTable("Libros");
                 });
 
+            modelBuilder.Entity("BibliotecaApi.Models.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios");
+                });
+
             modelBuilder.Entity("BibliotecaApi.Models.Libro", b =>
                 {
                     b.HasOne("BibliotecaApi.Models.Autor", "Autor")
