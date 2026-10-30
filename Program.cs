@@ -46,6 +46,17 @@ builder.Services.AddScoped<iLibroService, LibroDbService>();
 //builder.Services.AddScoped<iLibroService, LibroFileService>();
 builder.Services.AddScoped<IAutorService, AutorDbService>();
 
+// HttpClient TIPADO para consumir otra BibliotecaApi (la de un compañero).
+// La URL base se lee de appsettings ("ApiExterna:BaseUrl"); por defecto apunta
+// a este mismo proyecto para poder probar el autoconsumo.
+builder.Services.AddHttpClient<IBibliotecaExternaService, BibliotecaExternaService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiExterna:BaseUrl"]!);
+    // API KEY de servicio: viaja en el header X-API-Key en CADA request que haga este cliente.
+    // (La key sale de config; en producción, del .env. No hay login ni token que venza.)
+    client.DefaultRequestHeaders.Add("X-API-Key", builder.Configuration["ApiExterna:ApiKey"]);
+});
+
 // OpenAPI/Swagger para documentación y pruebas de la API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

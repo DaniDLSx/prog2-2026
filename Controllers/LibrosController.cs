@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BibliotecaApi.Models;
 using BibliotecaApi.Interfaces;
 using BibliotecaApi.DTOs;
+using BibliotecaApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotecaApi.Controllers;
@@ -62,7 +63,9 @@ public class LibrosController : ControllerBase
     }
 
     // POST: api/libros
+    // Escritura para integración entre APIs: se exige API KEY (header X-API-Key).
     [HttpPost]
+    [ApiKey]
     public async Task<ActionResult<Libro>> Create([FromBody] LibroCreateDTO nuevoLibro)
     {
         if (string.IsNullOrWhiteSpace(nuevoLibro.Titulo) || string.IsNullOrWhiteSpace(nuevoLibro.ISBN))
